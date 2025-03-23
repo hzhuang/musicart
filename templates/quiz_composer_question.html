@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="text-center mb-4">Composers Quiz</h1>
+
+    <div class="card shadow-sm mx-auto" style="max-width: 600px;">
+        <div class="card-body">
+            <form method="POST" action="submit_composer_answer">
+                {# Set the current composer from the session #}
+                {% set current_composer = session.selected_composers[session.current_composer_index] %}
+
+                {# Display composer description #}
+                <p class="mb-3">{{ current_composer[2][:100] }}...</p>
+
+                {# Input field for the user's answer #}
+                <div class="mb-3">
+                    <input type="text" name="answer" class="form-control" placeholder="Enter composer name" required>
+                </div>
+
+                {# Hidden field to store the composer's ID #}
+                <input type="hidden" name="composer_id" value="{{ current_composer[0] }}">
+
+                {# Submit button to save the answer and move to the next composer #}
+                <button type="submit" class="btn btn-primary w-100">Next</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

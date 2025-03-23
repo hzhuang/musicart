@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4">Review List</h1>
+    <div class="list-group">
+        {% for item in review_list %}
+        <div class="list-group-item mb-3 p-3 shadow-sm">
+            {% if item.category == 'term' %}
+                <h5 class="mb-2">Term: {{ item[3] }}</h5>
+                <p class="mb-1"><strong>Definition:</strong> {{ item[4] }}</p>
+                <p class="mb-1"><strong>Your Answer:</strong> {{ item[5] }}</p>
+            {% else %}
+                <h5 class="mb-2">Composer: {{ item[3] }}</h5>
+                <p class="mb-1"><strong>Bio:</strong> {{ item[4] }}</p>
+                <p class="mb-1"><strong>Your Answer:</strong> {{ item[5] }}</p>
+            {% endif %}
+            <form method="POST" action="/remove_review/{{ item[0] }}" class="mt-2">
+                <button type="submit" class="btn btn-danger btn-sm">Remove</button>
+            </form>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

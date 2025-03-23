@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="text-center mb-4">Composers</h1>
+
+    {# Debug: Show raw data #}
+    <!-- {{ composers }} -->
+
+    {% if composers|length > 0 %}
+    <div class="row">
+        {% for composer in composers %}
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <h2 class="card-title">{{ composer[1] }}</h2>  <!-- Name -->
+                    <p class="card-text">{{ composer[2] }}</p>     <!-- Bio -->
+        
+                    {% if composer[3] %}  <!-- Check if there is an audio link -->
+                        {% if composer[3][-4:] == ".mp3"  %}  <!-- Ensure it's a string -->
+                            <audio controls class="w-100 mb-3">
+                                <source src="{{ url_for('static', filename=composer[3]) }}" type="audio/mpeg">
+                                Your browser does not support the audio element.
+                            </audio>
+                        {% else %}
+                            <iframe style="border-radius:12px" 
+                                    src="{{ composer[3] }}" 
+                                    width="100%" height="152" 
+                                    frameborder="0" allowfullscreen 
+                                    allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" 
+                                    loading="lazy">
+                            </iframe>
+                        {% endif %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+        
+    </div>
+    {% else %}
+    <p class="text-center text-muted">No composers found in the database!</p>
+    {% endif %}
+
+    <div class="mt-5">
+        <h2 class="text-center mb-4">Add a New Composer</h2>
+        <form action="/add_composer" method="POST" class="bg-light p-4 rounded shadow-sm">
+            <div class="mb-3">
+                <label for="name" class="form-label">Name</label>
+                <input type="text" name="name" class="form-control" placeholder="Enter Name" required>
+            </div>
+            <div class="mb-3">
+                <label for="bio" class="form-label">Bio</label>
+                <textarea name="bio" class="form-control" placeholder="Enter Bio" rows="3" required></textarea>
+            </div>
+            <div class="mb-3">
+                <label for="audio_path" class="form-label">Audio File Path</label>
+                <input type="text" name="audio_path" class="form-control" placeholder="Enter Audio File Path" required>
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Add Composer</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

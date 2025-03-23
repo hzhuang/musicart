@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="text-center mb-4">Terms Quiz</h1>
+
+    <div class="card shadow-sm mx-auto" style="max-width: 600px;">
+        <div class="card-body">
+            <form method="POST" action="submit_term_answer">
+                {# Set the current term from the session #}
+                {% set current_term = session.selected_terms[session.current_term_index] %}
+
+                {# Display term definition #}
+                <p class="mb-3">{{ current_term[2][:100] }}...</p>
+
+                {# Input field for the user's answer #}
+                <div class="mb-3">
+                    <input type="text" name="answer" class="form-control" placeholder="Enter term name" required>
+                </div>
+
+                {# Hidden field to store the term's ID #}
+                <input type="hidden" name="term_id" value="{{ current_term[0] }}">
+
+                {# Submit button to save the answer and move to the next term #}
+                <button type="submit" class="btn btn-primary w-100">Next</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="text-center mb-4">Composer Quiz Result</h1>
+
+    <ul class="list-unstyled">
+        {% for composer in composers %}
+        <li class="card mb-4 p-3 shadow-sm">
+            <div class="card-body">
+                <h2 class="card-title">{{ composer[1] }}</h2>  <!-- Name -->
+                <p class="card-text">{{ composer[2] }}</p>     <!-- Bio -->
+
+                {% if composer[3] %}  <!-- Audio -->
+                <iframe style="border-radius:12px" 
+                    src="{{ composer[3] }}" 
+                    width="100%" height="152" 
+                    frameborder="0" allowfullscreen 
+                    allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" 
+                    loading="lazy">
+                </iframe>
+                {% endif %}
+
+                {% if answers|length > loop.index0 %}
+                {% set answer = answers[loop.index0] %}
+                <div class="alert alert-info">
+                    <strong>Your answer:</strong> {{ answer.user_answer }}
+                </div>
+                <div class="result-icon">
+                    {% if answer.user_answer == composer[1] %}
+                        <span class="text-success"><i class="fas fa-check-circle"></i></span> <!-- Tick icon for correct answer -->
+                    {% else %}
+                        <span class="text-danger"><i class="fas fa-times-circle"></i></span> <!-- Cross icon for wrong answer -->
+                    {% endif %}
+                </div>
+                {% endif %}
+
+                <button onclick="addToReview({{ composer[0] }}, '{{ composer[1] }}', '{{ composer[2] }}', '{{ answer.user_answer }}', this)" 
+                        class="btn btn-primary w-100">
+                    Add to review
+                </button>
+            </div>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+
+<!-- JavaScript for Async Submission -->
+<script>
+    function addToReview(composerId, name, bio, your_answer, button) {
+        fetch('/add_to_review', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ 
+                reference_id: composerId, 
+                category: 'composer', 
+                term_name: name, 
+                definition_bio: bio,
+                your_answer: your_answer
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                button.textContent = "Added!";
+                button.disabled = true;
+                button.classList.remove("btn-primary");
+                button.classList.add("btn-success");
+            } else {
+                alert("Error: " + (data.error || "Failed to add to review."));
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    }
+</script>
+{% endblock %}
